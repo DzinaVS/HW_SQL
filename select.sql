@@ -38,13 +38,24 @@ ORDER BY album_release;
 
 
 --Средняя продолжительность треков в каждом альбоме.
-SELECT 
+SELECT album_name, AVG(track_length) FROM album AS a
+LEFT JOIN track AS t ON a.id = t.album_id
+GROUP BY a.id, a.album_name
+ORDER BY avg(track_length);
 
 
 --Все исполнители, которые не выпустили альбомы в 2020 году.
-SELECT 
+SELECT artist_name FROM artist 
+WHERE artist.id NOT IN (SELECT artist_id FROM artistalbum
+	JOIN album ON artistalbum.album_id = album.id
+  WHERE EXTRACT (YEAR FROM album_release) = 2020);
 
 --Названия сборников, в которых представлен конкретный исполнитель (выберите его сами).
-SELECT 
+SELECT DISTINCT collection_name FROM collection col
+JOIN trackcollection tcol ON col.id = tcol.collection_id
+JOIN track t ON tcol.track_id = t.id
+JOIN artistalbum aa ON t.album_id = aa.album_id
+JOIN artist art ON aa.artist_id = art.id
+WHERE art.artist_name = 'Coolio';
 
 
